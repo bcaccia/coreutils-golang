@@ -34,13 +34,20 @@ func main() {
 		fmt.Println("no args, let's parse from stdin")
 		// define a scanner to read from stdin
 		scanner := bufio.NewScanner(os.Stdin)
-		// print out stdin for debugging
+
+		// define a variable to hold the bytes total
 		var bytesTotal = 0
+
+		// iterate through everything in the scanner and count the bytes
 		for scanner.Scan() {
+			// these two lines are for debugging only
 			//fmt.Println(scanner.Text()) // Println will add back the final '\n'
-			fmt.Println(len(scanner.Bytes()))
-			bytesTotal += len(scanner.Bytes())
+			//fmt.Println(int(len(scanner.Bytes())) + 1)
+
+			// convert the bytes on the line to an integer and add 1 to make it human readable
+			bytesTotal += int(len(scanner.Bytes()) + 1)
 		}
+		// print out the computed total bytes
 		fmt.Println(bytesTotal)
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
