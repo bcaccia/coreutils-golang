@@ -5,13 +5,15 @@ import (
 	"fmt"
 	flag "github.com/spf13/pflag"
 	"os"
+	"strings"
 )
 
-func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, linesResult int) {
+func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, wordsResult, linesResult int) {
 
 	// define a variable to hold the bytes total
 	var bytesTotal = 0
 	var charsTotal = 0
+	var wordsTotal = 0
 	var linesTotal = 0
 
 	// iterate through everything in the scanner and count the bytes
@@ -30,10 +32,15 @@ func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, linesResult in
 		// to coreutils wc. suspect the different in count to be due to unicode
 		charsTotal += len([]rune(scanner.Text())) + 1
 
+		// get total words
+		// break text up into words by white space characters
+		// then calculate the length in the array
+		wordsTotal += len(strings.Fields(scanner.Text()))
+
 		linesTotal++
 	}
 	// return the computed total bytes
-	return bytesTotal, charsTotal, linesTotal
+	return bytesTotal, charsTotal, wordsTotal, linesTotal
 }
 
 func main() {
@@ -62,9 +69,9 @@ func main() {
 		// define a scanner to read from stdin
 		scanner := bufio.NewScanner(os.Stdin)
 
-		bytesResult, charsResult, linesTotal := getCounts(scanner)
+		bytesResult, charsResult, wordsResult, linesTotal := getCounts(scanner)
 
-		fmt.Println(bytesResult, charsResult, linesTotal)
+		fmt.Println(bytesResult, charsResult, wordsResult, linesTotal)
 
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
@@ -78,9 +85,9 @@ func main() {
 			// define a scanner to read from the file
 			scanner := bufio.NewScanner(file)
 
-			bytesResult, charsResult, linesTotal := getCounts(scanner)
+			bytesResult, charsResult, wordsResult, linesTotal := getCounts(scanner)
 
-			fmt.Println(bytesResult, charsResult, linesTotal)
+			fmt.Println(bytesResult, charsResult, wordsResult, linesTotal)
 
 			if err != nil {
 				fmt.Println("Failed to open the file: %s", element)
