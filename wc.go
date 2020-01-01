@@ -25,6 +25,24 @@ func getTotalBytes(scanner *bufio.Scanner) (total int) {
 	return bytesTotal
 }
 
+func getTotalChars(scanner *bufio.Scanner) (total int) {
+
+	// define a variable to hold the chars total
+	var charsTotal = 0
+
+	// iterate through everything in the scanner and count the chars
+	for scanner.Scan() {
+		// convert and store contents of scanner to text
+		scannerText := scanner.Text()
+		// cast text as runes and get the len + 1
+		// TODO getting a different char count on binary files when compared
+		// to coreutils wc. suspect the different in count to be due to unicode
+		charsTotal += len([]rune(scannerText)) + 1
+	}
+	// print out the computed total chars
+	return charsTotal
+}
+
 func main() {
 	// define all the available flags for this command
 	byteFlag := flag.BoolP("bytes", "c", false, "print the byte counts")
@@ -45,16 +63,15 @@ func main() {
 	fmt.Println(*versionFlag)
 	// print out all the arguments passed in
 	args := flag.Args()
-	fmt.Println(args)
-
-	// define a scanner to read from stdin
-	scanner := bufio.NewScanner(os.Stdin)
 
 	// check if any filename was passed as an arg. if so, take action
 	if len(args) < 1 {
 		fmt.Println("no args, let's parse from stdin")
+		// define a scanner to read from stdin
+		scanner := bufio.NewScanner(os.Stdin)
 
-		total := getTotalBytes(scanner)
+		//total := getTotalBytes(scanner)
+		total := getTotalChars(scanner)
 
 		fmt.Println(total)
 		if err := scanner.Err(); err != nil {
@@ -65,8 +82,16 @@ func main() {
 	} else {
 		fmt.Println("args provided, let's parse out the filename")
 		fmt.Println(args)
+		// iterate through all the args and perform actions
 		for _, element := range args {
 			file, err := os.Open(element)
+			// define a scanner to read from the file
+			scanner := bufio.NewScanner(file)
+
+			//total := getTotalBytes(scanner)
+			total := getTotalChars(scanner)
+
+			fmt.Println(total)
 
 			if err != nil {
 				fmt.Println("Failed to open the file: %s", element)
