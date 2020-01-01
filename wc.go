@@ -7,11 +7,12 @@ import (
 	"os"
 )
 
-func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult int) {
+func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, linesResult int) {
 
 	// define a variable to hold the bytes total
 	var bytesTotal = 0
 	var charsTotal = 0
+	var linesTotal = 0
 
 	// iterate through everything in the scanner and count the bytes
 	for scanner.Scan() {
@@ -19,22 +20,20 @@ func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult int) {
 		//fmt.Println(scanner.Text()) // Println will add back the final '\n'
 		//fmt.Println(int(len(scanner.Bytes())) + 1)
 
-		// read the data from the scanner once as text
-		data := scanner.Text()
-
 		// get the total bytes
-		// convert the text formatted data var to bytes via casting and add 1
-		// for human readability
-		bytesTotal += len([]byte(data)) + 1
+		// add 1 for a human readable result
+		bytesTotal += len(scanner.Bytes()) + 1
 
 		// get the total characters
 		// cast text as runes and get the len + 1
 		// TODO getting a different char count on binary files when compared
 		// to coreutils wc. suspect the different in count to be due to unicode
-		charsTotal += len([]rune(data)) + 1
+		charsTotal += len([]rune(scanner.Text())) + 1
+
+		linesTotal++
 	}
 	// return the computed total bytes
-	return bytesTotal, charsTotal
+	return bytesTotal, charsTotal, linesTotal
 }
 
 func main() {
@@ -63,9 +62,10 @@ func main() {
 		// define a scanner to read from stdin
 		scanner := bufio.NewScanner(os.Stdin)
 
-		bytesResult, charsResult := getCounts(scanner)
+		bytesResult, charsResult, linesTotal := getCounts(scanner)
 
-		fmt.Println(bytesResult, charsResult)
+		fmt.Println(bytesResult, charsResult, linesTotal)
+
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
 			// exit and indicate failure
@@ -78,9 +78,9 @@ func main() {
 			// define a scanner to read from the file
 			scanner := bufio.NewScanner(file)
 
-			bytesResult, charsResult := getCounts(scanner)
+			bytesResult, charsResult, linesTotal := getCounts(scanner)
 
-			fmt.Println(bytesResult, charsResult)
+			fmt.Println(bytesResult, charsResult, linesTotal)
 
 			if err != nil {
 				fmt.Println("Failed to open the file: %s", element)
