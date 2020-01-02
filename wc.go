@@ -20,7 +20,11 @@ func checkForFlags(flagStates []bool) (argsPassed bool) {
 	return argsPassed
 }
 
-func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, lenResult, wordsResult, linesResult int) {
+func printResults(flagStates bool) {
+
+}
+
+func getCounts(scanner *bufio.Scanner) (result []int) {
 
 	// define a variable to hold the bytes total
 	var bytesTotal = 0
@@ -28,6 +32,8 @@ func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, lenResult, wor
 	var lenTotal = 0
 	var wordsTotal = 0
 	var linesTotal = 0
+
+	var resultsArray []int
 
 	// iterate through everything in the scanner and count the bytes
 	for scanner.Scan() {
@@ -61,7 +67,9 @@ func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, lenResult, wor
 		linesTotal++
 	}
 	// return the computed total bytes
-	return bytesTotal, charsTotal, lenTotal, wordsTotal, linesTotal
+	resultsArray = append(resultsArray, bytesTotal, charsTotal, lenTotal, wordsTotal, linesTotal)
+	return resultsArray
+
 }
 
 func main() {
@@ -89,9 +97,13 @@ func main() {
 		// define a scanner to read from stdin
 		scanner := bufio.NewScanner(os.Stdin)
 
-		bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
+		//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
+		var resultsArray []int
+		resultsArray = getCounts(scanner)
+		fmt.Println(flagsResult)
+		fmt.Println(resultsArray)
 
-		fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesResult)
+		//fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesResult)
 
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
@@ -107,16 +119,20 @@ func main() {
 			// define a scanner to read from the file
 			scanner := bufio.NewScanner(file)
 
-			bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp := getCounts(scanner)
+			//bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp := getCounts(scanner)
+			var resultsArray []int
+			resultsArray = getCounts(scanner)
+			fmt.Println(flagsResult)
+			fmt.Println(resultsArray)
 
-			fmt.Println(bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp, element)
+			//fmt.Println(bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp, element)
 
 			// add results to the tally variables
-			bytesResult += bytesResultTemp
-			charsResult += charsResultTemp
-			lenResult += lenResultTemp
-			wordsResult += wordsResultTemp
-			linesResult += linesResultTemp
+			//bytesResult += bytesResultTemp
+			//charsResult += charsResultTemp
+			//lenResult += lenResultTemp
+			//wordsResult += wordsResultTemp
+			//linesResult += linesResultTemp
 
 			if err != nil {
 				fmt.Println("Failed to open the file: %s", element)
