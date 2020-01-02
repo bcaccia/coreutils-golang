@@ -8,6 +8,18 @@ import (
 	"strings"
 )
 
+// determines if args have been passed by checking the flag states in an
+// array. if it encounters a true state, the loop breaks and returns true
+func checkForFlags(flagStates []bool) (argsPassed bool) {
+	for _, element := range flagStates {
+		if element == true {
+			argsPassed = true
+			break
+		}
+	}
+	return argsPassed
+}
+
 func getCounts(scanner *bufio.Scanner) (bytesResult, charsResult, lenResult, wordsResult, linesResult int) {
 
 	// define a variable to hold the bytes total
@@ -63,13 +75,12 @@ func main() {
 
 	flag.Parse()
 
-	// print out flag states just so we can test
-	fmt.Println(*byteFlag)
-	fmt.Println(*charsFlag)
-	fmt.Println(*linesFlag)
-	fmt.Println(*maxLineLengthFlag)
-	fmt.Println(*wordsFlag)
-	fmt.Println(*versionFlag)
+	// store all the flag states in an array
+	var flagStates = []bool{*byteFlag, *charsFlag, *linesFlag, *maxLineLengthFlag, *wordsFlag, *versionFlag}
+	// pass that array to a helper function to determine if args
+	// have been passed
+	flagsResult := checkForFlags(flagStates)
+
 	// print out all the arguments passed in
 	args := flag.Args()
 
@@ -78,9 +89,9 @@ func main() {
 		// define a scanner to read from stdin
 		scanner := bufio.NewScanner(os.Stdin)
 
-		bytesResult, charsResult, lenResult, wordsResult, linesTotal := getCounts(scanner)
+		bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
 
-		fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesTotal)
+		fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesResult)
 
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
@@ -88,15 +99,24 @@ func main() {
 			os.Exit(1)
 		}
 	} else {
+		// declar vars used to tally the results for each file
+		var bytesResult, charsResult, lenResult, wordsResult, linesResult int
 		// iterate through all the args and perform actions
 		for _, element := range args {
 			file, err := os.Open(element)
 			// define a scanner to read from the file
 			scanner := bufio.NewScanner(file)
 
-			bytesResult, charsResult, lenResult, wordsResult, linesTotal := getCounts(scanner)
+			bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp := getCounts(scanner)
 
-			fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesTotal)
+			fmt.Println(bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp, element)
+
+			// add results to the tally variables
+			bytesResult += bytesResultTemp
+			charsResult += charsResultTemp
+			lenResult += lenResultTemp
+			wordsResult += wordsResultTemp
+			linesResult += linesResultTemp
 
 			if err != nil {
 				fmt.Println("Failed to open the file: %s", element)
@@ -104,6 +124,11 @@ func main() {
 				os.Exit(1)
 			}
 			defer file.Close()
+		}
+		// only print out the sum of all files if there is more
+		// than one file in the args variable
+		if len(args) > 1 {
+			fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesResult, "total")
 		}
 
 	}
