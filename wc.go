@@ -20,18 +20,25 @@ func checkForFlags(flagStates []bool) (argsPassed bool) {
 	return argsPassed
 }
 
-func printResults(flagStates bool) {
+func printResults(flagsResult bool, flagStates []bool, resultsArray []int) {
+	// print out default values if false
+	// these are newline, words, and byte counts
+	if flagsResult == false {
+		fmt.Println(resultsArray[2], resultsArray[4], resultsArray[0])
+	} else {
+		// The counts are printed in this order: newlines, words, characters, bytes, maximum line length
+	}
 
 }
 
 func getCounts(scanner *bufio.Scanner) (result []int) {
 
 	// define a variable to hold the bytes total
-	var bytesTotal = 0
-	var charsTotal = 0
-	var lenTotal = 0
-	var wordsTotal = 0
 	var linesTotal = 0
+	var wordsTotal = 0
+	var charsTotal = 0
+	var bytesTotal = 0
+	var lenTotal = 0
 
 	var resultsArray []int
 
@@ -67,7 +74,7 @@ func getCounts(scanner *bufio.Scanner) (result []int) {
 		linesTotal++
 	}
 	// return the computed total bytes
-	resultsArray = append(resultsArray, bytesTotal, charsTotal, lenTotal, wordsTotal, linesTotal)
+	resultsArray = append(resultsArray, linesTotal, wordsTotal, charsTotal, bytesTotal, lenTotal)
 	return resultsArray
 
 }
@@ -84,7 +91,7 @@ func main() {
 	flag.Parse()
 
 	// store all the flag states in an array
-	var flagStates = []bool{*byteFlag, *charsFlag, *linesFlag, *maxLineLengthFlag, *wordsFlag, *versionFlag}
+	var flagStates = []bool{*linesFlag, *wordsFlag, *charsFlag, *byteFlag, *maxLineLengthFlag, *versionFlag}
 	// pass that array to a helper function to determine if args
 	// have been passed
 	flagsResult := checkForFlags(flagStates)
@@ -100,8 +107,7 @@ func main() {
 		//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
 		var resultsArray []int
 		resultsArray = getCounts(scanner)
-		fmt.Println(flagsResult)
-		fmt.Println(resultsArray)
+		printResults(flagsResult, flagStates, resultsArray)
 
 		//fmt.Println(bytesResult, charsResult, lenResult, wordsResult, linesResult)
 
