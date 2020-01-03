@@ -27,6 +27,12 @@ func printResults(flagsResult bool, flagStates []bool, resultsArray []int) {
 		fmt.Println(resultsArray[2], resultsArray[4], resultsArray[0])
 	} else {
 		// The counts are printed in this order: newlines, words, characters, bytes, maximum line length
+		for index, element := range resultsArray {
+			if flagStates[index] == true {
+				fmt.Print(element)
+				fmt.Print(" ")
+			}
+		}
 	}
 
 }
