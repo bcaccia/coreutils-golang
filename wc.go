@@ -160,10 +160,16 @@ func main() {
 		// only print out the sum of all files if there is more
 		// than one file in the args variable
 		if len(args) > 1 {
-			for index, element := range totalTally {
-				if flagStates[index] == true {
-					fmt.Print(element)
-					fmt.Print(" ")
+
+			if flagsResult == false {
+				fmt.Print(totalTally[2], totalTally[4], totalTally[0])
+				fmt.Print(" ")
+			} else {
+				for index, element := range totalTally {
+					if flagStates[index] == true {
+						fmt.Print(element)
+						fmt.Print(" ")
+					}
 				}
 			}
 			fmt.Print("total")
