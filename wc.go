@@ -20,7 +20,7 @@ func checkForFlags(flagStates []bool) (argsPassed bool) {
 	return argsPassed
 }
 
-func printResults(flagsResult bool, flagStates []bool, resultsArray []int64) {
+func printResults(flagsResult bool, flagStates []bool, resultsArray []uint64) {
 	// print out default values if false
 	// these are newline, words, and byte counts
 	if flagsResult == false {
@@ -38,16 +38,16 @@ func printResults(flagsResult bool, flagStates []bool, resultsArray []int64) {
 
 }
 
-func getCounts(scanner *bufio.Scanner) (result []int64) {
+func getCounts(scanner *bufio.Scanner) (result []uint64) {
 
 	// define a variable to hold the bytes total
-	var linesTotal int64
-	var wordsTotal int64
-	var charsTotal int64
-	var bytesTotal int64
-	var lenTotal int64
+	var linesTotal uint64
+	var wordsTotal uint64
+	var charsTotal uint64
+	var bytesTotal uint64
+	var lenTotal uint64
 
-	var resultsArray []int64
+	var resultsArray []uint64
 
 	// iterate through everything in the scanner and count the bytes
 	for scanner.Scan() {
@@ -57,18 +57,18 @@ func getCounts(scanner *bufio.Scanner) (result []int64) {
 
 		// get the total bytes
 		// add 1 for a human readable result
-		bytesTotal += int64(len(scanner.Bytes()) + 1)
+		bytesTotal += uint64(len(scanner.Bytes()) + 1)
 
 		// get the total characters
 		// cast text as runes and get the len + 1
 		// TODO getting a different char count on binary files when compared
 		// to coreutils wc. suspect the different in count to be due to unicode
-		charsTotal += int64(len([]rune(scanner.Text())) + 1)
+		charsTotal += uint64(len([]rune(scanner.Text())) + 1)
 
 		// get maximum line length
 		// get the total chars but trim any whitespace off the
 		// end. then compare if larger than previous result
-		lenTotalTemp := int64(len([]rune(strings.TrimRight(scanner.Text(), " "))))
+		lenTotalTemp := uint64(len([]rune(strings.TrimRight(scanner.Text(), " "))))
 		if lenTotalTemp > lenTotal {
 			lenTotal = lenTotalTemp
 		}
@@ -76,7 +76,7 @@ func getCounts(scanner *bufio.Scanner) (result []int64) {
 		// get total words
 		// break text up into words by white space characters
 		// then calculate the length in the array
-		wordsTotal += int64(len(strings.Fields(scanner.Text())))
+		wordsTotal += uint64(len(strings.Fields(scanner.Text())))
 
 		linesTotal++
 	}
@@ -112,7 +112,7 @@ func main() {
 		scanner := bufio.NewScanner(os.Stdin)
 
 		//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
-		var resultsArray []int64
+		var resultsArray []uint64
 		resultsArray = getCounts(scanner)
 		printResults(flagsResult, flagStates, resultsArray)
 
@@ -124,7 +124,7 @@ func main() {
 	} else {
 		// declare vars used to tally the results for each file
 		//var bytesResult, charsResult, lenResult, wordsResult, linesResult int
-		var totalTally [5]int64
+		var totalTally [5]uint64
 		// iterate through all the args and perform actions
 		for _, element := range args {
 			file, err := os.Open(element)
@@ -132,7 +132,7 @@ func main() {
 			scanner := bufio.NewScanner(file)
 
 			//bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp := getCounts(scanner)
-			var resultsArray []int64
+			var resultsArray []uint64
 			resultsArray = getCounts(scanner)
 			printResults(flagsResult, flagStates, resultsArray)
 			fmt.Print(element + "\n")
