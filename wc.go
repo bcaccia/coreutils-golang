@@ -87,10 +87,15 @@ func getCounts(scanner *bufio.Scanner) (result []uint64) {
 }
 
 func main() {
+	var filesFrom string
+
 	// define all the available flags for this command
 	byteFlag := flag.BoolP("bytes", "c", false, "print the byte counts")
 	charsFlag := flag.BoolP("chars", "m", false, "print the character counts")
 	linesFlag := flag.BoolP("lines", "l", false, "print the newline counts")
+	flag.StringVar(&filesFrom, "files0-from", "", `read input from the files specified by
+                             NUL-terminated names in file F;
+                             If F is - then read names from standard input`)
 	maxLineLengthFlag := flag.BoolP("max-line-length", "L", false, "print the maximum display width")
 	wordsFlag := flag.BoolP("words", "w", false, "print the maximum display width")
 	versionFlag := flag.BoolP("version", "v", false, "output version information and exit")
@@ -110,6 +115,10 @@ func main() {
 	if *versionFlag == true {
 		fmt.Println("wc Golang rewrite v1.0")
 		fmt.Println("Written by Benjamin Caccia")
+	} else if len(filesFrom) > 0 {
+		fmt.Println(filesFrom)
+		fmt.Println("not yet implemented")
+
 	} else {
 
 		// check if any filename was passed as an arg. if so, take action
