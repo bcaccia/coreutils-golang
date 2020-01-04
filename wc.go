@@ -98,7 +98,7 @@ func main() {
 	flag.Parse()
 
 	// store all the flag states in an array
-	var flagStates = []bool{*linesFlag, *wordsFlag, *charsFlag, *byteFlag, *maxLineLengthFlag, *versionFlag}
+	var flagStates = []bool{*linesFlag, *wordsFlag, *charsFlag, *byteFlag, *maxLineLengthFlag}
 	// pass that array to a helper function to determine if args
 	// have been passed
 	flagsResult := checkForFlags(flagStates)
@@ -106,74 +106,81 @@ func main() {
 	// print out all the arguments passed in
 	args := flag.Args()
 
-	// check if any filename was passed as an arg. if so, take action
-	if len(args) < 1 {
-		// define a scanner to read from stdin
-		scanner := bufio.NewScanner(os.Stdin)
-
-		//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
-		var resultsArray []uint64
-		resultsArray = getCounts(scanner)
-		printResults(flagsResult, flagStates, resultsArray)
-
-		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(os.Stderr, "reading standard input:", err)
-			// exit and indicate failure
-			os.Exit(1)
-		}
+	// check if the -v flag is passed and if so print out version information
+	if *versionFlag == true {
+		fmt.Println("wc Golang rewrite v1.0")
+		fmt.Println("Written by Benjamin Caccia")
 	} else {
-		// declare vars used to tally the results for each file
-		//var bytesResult, charsResult, lenResult, wordsResult, linesResult int
-		var totalTally [5]uint64
-		// iterate through all the args and perform actions
-		for _, element := range args {
-			file, err := os.Open(element)
-			// define a scanner to read from the file
-			scanner := bufio.NewScanner(file)
 
-			//bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp := getCounts(scanner)
+		// check if any filename was passed as an arg. if so, take action
+		if len(args) < 1 {
+			// define a scanner to read from stdin
+			scanner := bufio.NewScanner(os.Stdin)
+
+			//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
 			var resultsArray []uint64
 			resultsArray = getCounts(scanner)
 			printResults(flagsResult, flagStates, resultsArray)
-			fmt.Print(element + "\n")
 
-			//fmt.Println(bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp, element)
-
-			for index, element := range resultsArray {
-				totalTally[index] += element
-			}
-
-			// add results to the tally variables
-			//bytesResult += bytesResultTemp
-			//charsResult += charsResultTemp
-			//lenResult += lenResultTemp
-			//wordsResult += wordsResultTemp
-			//linesResult += linesResultTemp
-
-			if err != nil {
-				fmt.Println("Failed to open the file: %s", element)
+			if err := scanner.Err(); err != nil {
+				fmt.Fprintln(os.Stderr, "reading standard input:", err)
 				// exit and indicate failure
 				os.Exit(1)
 			}
-			defer file.Close()
-		}
-		// only print out the sum of all files if there is more
-		// than one file in the args variable
-		if len(args) > 1 {
+		} else {
+			// declare vars used to tally the results for each file
+			//var bytesResult, charsResult, lenResult, wordsResult, linesResult int
+			var totalTally [5]uint64
+			// iterate through all the args and perform actions
+			for _, element := range args {
+				file, err := os.Open(element)
+				// define a scanner to read from the file
+				scanner := bufio.NewScanner(file)
 
-			if flagsResult == false {
-				fmt.Print(totalTally[2], totalTally[4], totalTally[0])
-				fmt.Print(" ")
-			} else {
-				for index, element := range totalTally {
-					if flagStates[index] == true {
-						fmt.Print(element)
-						fmt.Print(" ")
+				//bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp := getCounts(scanner)
+				var resultsArray []uint64
+				resultsArray = getCounts(scanner)
+				printResults(flagsResult, flagStates, resultsArray)
+				fmt.Print(element + "\n")
+
+				//fmt.Println(bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp, element)
+
+				for index, element := range resultsArray {
+					totalTally[index] += element
+				}
+
+				// add results to the tally variables
+				//bytesResult += bytesResultTemp
+				//charsResult += charsResultTemp
+				//lenResult += lenResultTemp
+				//wordsResult += wordsResultTemp
+				//linesResult += linesResultTemp
+
+				if err != nil {
+					fmt.Println("Failed to open the file: %s", element)
+					// exit and indicate failure
+					os.Exit(1)
+				}
+				defer file.Close()
+			}
+			// only print out the sum of all files if there is more
+			// than one file in the args variable
+			if len(args) > 1 {
+
+				if flagsResult == false {
+					fmt.Print(totalTally[2], totalTally[4], totalTally[0])
+					fmt.Print(" ")
+				} else {
+					for index, element := range totalTally {
+						if flagStates[index] == true {
+							fmt.Print(element)
+							fmt.Print(" ")
+						}
 					}
 				}
+				fmt.Print("total")
 			}
-			fmt.Print("total")
-		}
 
+		}
 	}
 }
