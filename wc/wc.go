@@ -166,7 +166,7 @@ func main() {
 				//linesResult += linesResultTemp
 
 				if err != nil {
-					fmt.Println("Failed to open the file: %s", element)
+					fmt.Println("Failed to open the file: ", element)
 					// exit and indicate failure
 					os.Exit(1)
 				}
