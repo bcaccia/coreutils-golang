@@ -152,18 +152,9 @@ func main() {
 				printResults(flagsResult, flagStates, resultsArray)
 				fmt.Print(element + "\n")
 
-				//fmt.Println(bytesResultTemp, charsResultTemp, lenResultTemp, wordsResultTemp, linesResultTemp, element)
-
 				for index, element := range resultsArray {
 					totalTally[index] += element
 				}
-
-				// add results to the tally variables
-				//bytesResult += bytesResultTemp
-				//charsResult += charsResultTemp
-				//lenResult += lenResultTemp
-				//wordsResult += wordsResultTemp
-				//linesResult += linesResultTemp
 
 				if err != nil {
 					fmt.Println("Failed to open the file: ", element)
