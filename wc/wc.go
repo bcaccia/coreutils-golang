@@ -8,6 +8,34 @@ import (
 	"strings"
 )
 
+func loadFromFile(filesFrom string) {
+	if filesFrom == "-" {
+		// TODO implement
+		fmt.Println("implement stdin ascii null parsing")
+
+	} else {
+		// "\000" is used to indicate an ACII NULL char
+		fmt.Println(filesFrom)
+		fmt.Println("not yet implemented")
+		file, err := os.Open(filesFrom)
+		// define a scanner to read from the file
+		scanner := bufio.NewScanner(file)
+
+		for scanner.Scan() {
+			fileNames := scanner.Text()
+			fileNamesSplit := strings.Split(fileNames, "\000")
+			fmt.Println(fileNamesSplit)
+		}
+
+		if err != nil {
+			fmt.Println("Failed to open the file: ", filesFrom)
+			// exit and indicate failure
+			os.Exit(1)
+		}
+		defer file.Close()
+	}
+}
+
 // determines if args have been passed by checking the flag states in an
 // array. if it encounters a true state, the loop breaks and returns true
 func checkForFlags(flagStates []bool) (argsPassed bool) {
@@ -115,43 +143,27 @@ func main() {
 	if *versionFlag == true {
 		fmt.Println("wc Golang rewrite v1.0")
 		fmt.Println("Written by Benjamin Caccia")
-	} else if len(filesFrom) > 0 {
-		// TODO implement from file method
-		// "\000" is used to indicate an ACII NULL char
-		fmt.Println(filesFrom)
-		fmt.Println("not yet implemented")
-		file, err := os.Open(filesFrom)
-		// define a scanner to read from the file
-		scanner := bufio.NewScanner(file)
-
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-			// TODO figure out how to split at the ASCII NULL char
-		}
-
-		if err != nil {
-			fmt.Println("Failed to open the file: ", filesFrom)
-			// exit and indicate failure
-			os.Exit(1)
-		}
-		defer file.Close()
-
 	} else {
 
 		// check if any filename was passed as an arg. if so, take action
 		if len(args) < 1 {
-			// define a scanner to read from stdin
-			scanner := bufio.NewScanner(os.Stdin)
+			if len(filesFrom) > 0 {
+				loadFromFile(filesFrom)
+			} else {
+				// define a scanner to read from stdin
+				scanner := bufio.NewScanner(os.Stdin)
 
-			//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
-			var resultsArray []uint64
-			resultsArray = getCounts(scanner)
-			printResults(flagsResult, flagStates, resultsArray)
+				//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
+				var resultsArray []uint64
+				resultsArray = getCounts(scanner)
+				printResults(flagsResult, flagStates, resultsArray)
 
-			if err := scanner.Err(); err != nil {
-				fmt.Fprintln(os.Stderr, "reading standard input:", err)
-				// exit and indicate failure
-				os.Exit(1)
+				if err := scanner.Err(); err != nil {
+					fmt.Fprintln(os.Stderr, "reading standard input:", err)
+					// exit and indicate failure
+					os.Exit(1)
+				}
+
 			}
 		} else {
 			// declare vars used to tally the results for each file
