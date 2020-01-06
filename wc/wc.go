@@ -116,8 +116,25 @@ func main() {
 		fmt.Println("wc Golang rewrite v1.0")
 		fmt.Println("Written by Benjamin Caccia")
 	} else if len(filesFrom) > 0 {
+		// TODO implement from file method
+		// "\000" is used to indicate an ACII NULL char
 		fmt.Println(filesFrom)
 		fmt.Println("not yet implemented")
+		file, err := os.Open(filesFrom)
+		// define a scanner to read from the file
+		scanner := bufio.NewScanner(file)
+
+		for scanner.Scan() {
+			fmt.Println(scanner.Text())
+			// TODO figure out how to split at the ASCII NULL char
+		}
+
+		if err != nil {
+			fmt.Println("Failed to open the file: ", filesFrom)
+			// exit and indicate failure
+			os.Exit(1)
+		}
+		defer file.Close()
 
 	} else {
 
