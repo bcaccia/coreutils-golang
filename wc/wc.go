@@ -153,7 +153,15 @@ func main() {
 				fmt.Print(element + "\n")
 
 				for index, element := range resultsArray {
-					totalTally[index] += element
+					// check if new value for max line length is greater than
+					// what is currently stored in the tally. if so, replace it
+					if index == 4 {
+						if element > totalTally[index] {
+							totalTally[index] = element
+						}
+					} else {
+						totalTally[index] += element
+					}
 				}
 
 				if err != nil {
