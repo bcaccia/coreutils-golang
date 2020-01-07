@@ -62,7 +62,7 @@ func printResults(flagsResult bool, flagStates []bool, resultsArray []uint64) {
 	// print out default values if false
 	// these are newline, words, and byte counts
 	if flagsResult == false {
-		fmt.Print(resultsArray[2], resultsArray[4], resultsArray[0])
+		fmt.Print(resultsArray[0], resultsArray[1], resultsArray[3])
 		fmt.Print(" ")
 	} else {
 		// The counts are printed in this order: newlines, words, characters, bytes, maximum line length
@@ -215,7 +215,7 @@ func main() {
 			if len(args) > 1 {
 
 				if flagsResult == false {
-					fmt.Print(totalTally[2], totalTally[4], totalTally[0])
+					fmt.Print(totalTally[0], totalTally[1], totalTally[3])
 					fmt.Print(" ")
 				} else {
 					for index, element := range totalTally {
