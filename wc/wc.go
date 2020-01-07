@@ -10,32 +10,39 @@ import (
 
 func loadFromFile(filesFrom string) (fileList []string) {
 	var fileNamesSplit []string
+	var scanner *bufio.Scanner
+
+	// "\000" is used to indicate an ACII NULL char
+	file, err := os.Open(filesFrom)
+
 	if filesFrom == "-" {
-		// TODO implement
-		fmt.Println("implement stdin ascii null parsing")
+		// read file list from stdin
+		// define a scanner to read from stdin
+		scanner = bufio.NewScanner(os.Stdin)
 
 	} else {
-		// "\000" is used to indicate an ACII NULL char
-		fmt.Println(filesFrom)
-		file, err := os.Open(filesFrom)
+		// read file list from file
 		// define a scanner to read from the file
-		scanner := bufio.NewScanner(file)
-
-		for scanner.Scan() {
-			fileNames := scanner.Text()
-			fileNamesSplit = strings.Split(fileNames, "\000")
-			// remove the trailing ASCII NULL char
-			fileNamesSplit = fileNamesSplit[:len(fileNamesSplit)-1]
-			return fileNamesSplit
-		}
-
-		if err != nil {
-			fmt.Println("Failed to open the file: ", filesFrom)
-			// exit and indicate failure
-			os.Exit(1)
-		}
-		defer file.Close()
+		scanner = bufio.NewScanner(file)
 	}
+
+	for scanner.Scan() {
+		fileNames := scanner.Text()
+		// split at the ASCII NULL char
+		fileNamesSplit = strings.Split(fileNames, "\000")
+		// remove the trailing ASCII NULL char
+		fileNamesSplit = fileNamesSplit[:len(fileNamesSplit)-1]
+
+		return fileNamesSplit
+	}
+
+	if err != nil {
+		fmt.Println("Failed to open the file: ", filesFrom)
+		// exit and indicate failure
+		os.Exit(1)
+	}
+	defer file.Close()
+
 	return fileNamesSplit
 }
 
