@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-func loadFromFile(filesFrom string) {
+func loadFromFile(filesFrom string) (fileList []string) {
+	var fileNamesSplit []string
 	if filesFrom == "-" {
 		// TODO implement
 		fmt.Println("implement stdin ascii null parsing")
@@ -16,15 +17,16 @@ func loadFromFile(filesFrom string) {
 	} else {
 		// "\000" is used to indicate an ACII NULL char
 		fmt.Println(filesFrom)
-		fmt.Println("not yet implemented")
 		file, err := os.Open(filesFrom)
 		// define a scanner to read from the file
 		scanner := bufio.NewScanner(file)
 
 		for scanner.Scan() {
 			fileNames := scanner.Text()
-			fileNamesSplit := strings.Split(fileNames, "\000")
-			fmt.Println(fileNamesSplit)
+			fileNamesSplit = strings.Split(fileNames, "\000")
+			// remove the trailing ASCII NULL char
+			fileNamesSplit = fileNamesSplit[:len(fileNamesSplit)-1]
+			return fileNamesSplit
 		}
 
 		if err != nil {
@@ -34,6 +36,7 @@ func loadFromFile(filesFrom string) {
 		}
 		defer file.Close()
 	}
+	return fileNamesSplit
 }
 
 // determines if args have been passed by checking the flag states in an
@@ -163,7 +166,8 @@ func main() {
 			}
 		} else {
 			if len(filesFrom) > 0 {
-				loadFromFile(filesFrom)
+				args = loadFromFile(filesFrom)
+				fmt.Println(len(args))
 			}
 			// declare vars used to tally the results for each file
 			//var bytesResult, charsResult, lenResult, wordsResult, linesResult int
