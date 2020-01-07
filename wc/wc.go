@@ -89,7 +89,7 @@ func getCounts(scanner *bufio.Scanner) (result []uint64) {
 
 		// get the total characters
 		// cast text as runes and get the len + 1
-		// TODO getting a different char count on binary files when compared
+		// Tsudo apt-get install pkg-config libncursesw5-dev libreadline-devODO getting a different char count on binary files when compared
 		// to coreutils wc. suspect the different in count to be due to unicode
 		charsTotal += uint64(len([]rune(scanner.Text())) + 1)
 
@@ -146,26 +146,25 @@ func main() {
 	} else {
 
 		// check if any filename was passed as an arg. if so, take action
-		if len(args) < 1 {
-			if len(filesFrom) > 0 {
-				loadFromFile(filesFrom)
-			} else {
-				// define a scanner to read from stdin
-				scanner := bufio.NewScanner(os.Stdin)
+		if len(args) < 1 && len(filesFrom) < 1 {
+			// define a scanner to read from stdin
+			scanner := bufio.NewScanner(os.Stdin)
 
-				//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
-				var resultsArray []uint64
-				resultsArray = getCounts(scanner)
-				printResults(flagsResult, flagStates, resultsArray)
+			//bytesResult, charsResult, lenResult, wordsResult, linesResult := getCounts(scanner)
+			var resultsArray []uint64
+			resultsArray = getCounts(scanner)
+			printResults(flagsResult, flagStates, resultsArray)
 
-				if err := scanner.Err(); err != nil {
-					fmt.Fprintln(os.Stderr, "reading standard input:", err)
-					// exit and indicate failure
-					os.Exit(1)
-				}
+			if err := scanner.Err(); err != nil {
+				fmt.Fprintln(os.Stderr, "reading standard input:", err)
+				// exit and indicate failure
+				os.Exit(1)
 
 			}
 		} else {
+			if len(filesFrom) > 0 {
+				loadFromFile(filesFrom)
+			}
 			// declare vars used to tally the results for each file
 			//var bytesResult, charsResult, lenResult, wordsResult, linesResult int
 			var totalTally [5]uint64
